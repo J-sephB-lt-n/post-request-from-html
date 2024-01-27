@@ -1,5 +1,5 @@
 # post-request-from-html
-description TODO
+Barebones HTML page to submit a basic post request
 
 ```bash
 ~$ flask run

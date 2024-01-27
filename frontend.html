@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Custom Request Form</title>
+  </head>
+  <body>
+    <h2>Custom Post Request</h2>
+
+    <form id="requestHeadersForm">
+      <label for="requestHeadersInput">Headers: </label>
+      <input
+        size="50"
+        type="text"
+        id="requestHeadersText"
+        name="reqestHeadersText"
+        value="{}"
+        required
+      />
+      <br />
+    </form>
+
+    <form id="urlForm">
+      <label for="urlInput">URL: </label>
+      <input
+        size="50"
+        type="text"
+        id="urlText"
+        name="urlText"
+        required
+        value="http://localhost:5000/test"
+      />
+      <br />
+    </form>
+
+    <form id="requestBodyForm">
+      <label for="postBody">Request body: </label>
+      <input
+        size="50"
+        type="text"
+        id="postBodyText"
+        name="postBodyText"
+        required
+        value='{"ex":"ample"}'
+      />
+      <br />
+    </form>
+
+    <button type="button" onclick="sendRequest()">Send Request</button>
+
+    <div id="requestSummaryContainer"></div>
+    <div id="requestResponseContainer"></div>
+
+    <script>
+      function sendRequest() {
+        // Get the input text
+        var requestHeaders = JSON.parse(
+          document.getElementById("requestHeadersText").value,
+        );
+        var url = document.getElementById("urlText").value;
+        var postBody = JSON.parse(
+          document.getElementById("postBodyText").value,
+        );
+
+        var requestSummaryContainer = document.getElementById(
+          "requestSummaryContainer",
+        );
+        requestSummaryContainer.innerHTML +=
+          "Request Headers: " +
+          JSON.stringify(requestHeaders, null, 4).replace(
+            /(?:\r\n|\r|\n)/g,
+            "<br>",
+          ) +
+          "<br>";
+        requestSummaryContainer.innerHTML +=
+          "Request Body: " +
+          JSON.stringify(postBody, null, 4).replace(/(?:\r\n|\r|\n)/g, "<br>") +
+          "<br>";
+
+        // Create a new XMLHttpRequest object
+        var xhr = new XMLHttpRequest();
+
+        // Set up the POST request to https://www.mycustomthing.com
+        xhr.open("POST", "http://localhost:5000/test", true);
+        xhr.setRequestHeader("Content-Type", "application/json");
+
+        // Set up the callback function to handle the response
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState == 4) {
+            // Get the response container
+            var responseContainer = document.getElementById(
+              "requestResponseContainer",
+            );
+
+            // Check if the request was successful
+            if (xhr.status == 200) {
+              // Display the response in the container
+              responseContainer.innerHTML = "Endpoint response: [" + xhr.status + "] '"+ xhr.responseText + "'";
+            } else {
+              // Display an error message in the container
+              responseContainer.innerHTML =
+                "Error: " + xhr.status + " " + xhr.statusText;
+            }
+          }
+        };
+
+        // Convert the input text to JSON format
+        var data = JSON.stringify(postBody);
+
+        // Send the POST request with the input text as the request body
+        xhr.send(data);
+      }
+    </script>
+  </body>
+</html>
